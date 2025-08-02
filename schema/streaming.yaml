@@ -1,0 +1,360 @@
+name: "VOC streaming_website configuration"
+id: https://c3voc.org/schema/streaming
+prefixes:
+  vs: https://c3voc.org/schema/streaming
+  linkml: https://w3id.org/linkml/
+imports:
+- linkml:types
+default_prefix: vs
+
+classes:
+  VOCStreamingConfiguration:
+    slots:
+    - conference
+    slot_usage:
+      conference:
+        required: true
+  Room:
+    description: "Liste der Räume/Streams/Channels (= Audio & Video Produktionen, auch DJ-Sets o.ä.)"
+    slots:
+    - name
+    - slug
+    - streamId
+    - streamingConfig
+    slot_usage:
+      name:
+        required: true
+      slug:
+        required: true
+      streamId:
+        required: true
+      streamingConfig:
+        range: RoomStreamingConfig
+  Features:
+    description: ''
+    slots:
+    - relive
+    - embed
+    - feedback
+    - chat
+    - social
+    slot_usage:
+      relive:
+        description: "Wird diese Option deaktivert, wird die UI für tempor\xE4\
+          re Mitschnitte nicht angezeigt"
+        range: boolean
+      embed:
+        description: Wird diese Option deaktivert, werden alle Embedding-Funktionen deaktiviert.
+        range: boolean
+      feedback:
+        description: Wird diese Option deaktivert, wird das gesamte Feedback-System
+          deaktiviert
+        range: boolean
+      chat: {}
+      social: {}
+  StreamingConfig:
+    description: ''
+    slots:
+    - schedule
+    - features
+    - overviewPage
+    - html
+    - extraFiles
+    slot_usage:
+      schedule: {}
+      features:
+        range: Features
+        required: true
+      overviewPage:
+        range: Page
+      html:
+        description: Anpassung der Standard-Texte
+      extraFiles: {}
+  RoomStreamingConfig:
+    description: ''
+    slots:
+    - display
+    - display_short
+    - wide
+    - preview
+    - translation
+    - stereo
+    - dash
+    - hd_video
+    - sd_video
+    - slides
+    - audio
+    - music
+    - schedule
+    - feedback
+    - subtitles
+    - subtitles_room_id
+    - embed
+    - chat
+    - social
+    slot_usage:
+      display:
+        description: ''
+      display_short: {}
+      wide:
+        description: "Doppelte Breite für die Teaserbox auf der Übersichtsseite"
+        range: boolean
+      preview:
+        description: ''
+        range: boolean
+      translation:
+        range: TranslationConfig
+        multivalued: true
+      stereo:
+        description: ''
+        range: boolean
+      dash:
+        description: ''
+        range: boolean
+      hd_video:
+        description: "Wenn dieses Flag deaktiviert wird kein HD-Video (1920\xD71080)\
+          \ angeboten. Wird auch SD-Video und DASH deaktivert, wird für diesen\
+          \ Raum überhaupt kein Video angeboten. In diesem Fall wird Slides, Audio\
+          \ und zuletzt Musik als Default-Stream angenommen \u2013\_sofern aktiviert."
+        range: boolean
+      sd_video:
+        description: ''
+        range: boolean
+      slides:
+        description: "Getrennter Stream für Vortragsfolien verfügbar"
+        range: boolean
+      audio:
+        description: ''
+        range: boolean
+      music:
+        description: ''
+        range: boolean
+      schedule:
+        description: "Wenn diese Option deaktivert wird der Raum nicht im Fahrplan\
+          \ gesucht und auch auf der Startseite findet keine Darstellung statt. Ebenso\
+          \ k\xF6nnen alle Fahrplan-Funktionialit\xE4ten durch auskommentieren des\
+          \ globalen Flags deaktiviert werden."
+        range: boolean
+      feedback:
+        description: "Wenn diese Option deaktivert taucht der Raum auch im globalen\
+          \ Feedback-Formular nicht auf. H\xE4ngt vom Feedback-Flag in den globalen\
+          \ Optionen ab."
+        range: boolean
+      subtitles:
+        description: "Subtitles-Button und die damit verbundenen Funktionen. H\xE4\
+          ngt vom Subtitles-Flag in den globalen Optionen ab."
+        range: boolean
+      subtitles_room_id:
+        description: ''
+        range: integer
+      embed:
+        description: "Ist dieses Option aktiviert, wird ein Embed-Tab unter dem Video\
+          \ angezeigt. Darüber kann der Player als iframe eingebunden werden. Wenn\
+          \ diese Option deaktivert ist, wird kein Embed-Tab angeboten und die URL\
+          \ zum Einbetten existiert nicht. Ebenso k\xF6nnen alle Embedding-Funktionialit\xE4\
+          ten durch deaktiveren des globalen EMBED-Blocks deaktiviert werden."
+        range: boolean
+      chat:
+        description: Ist diese Option aktiviert, wird ein Chat-Tab mit den jeweiligen
+          Links angezeigt.
+        range: ChatConfig
+      social:
+        description: Sind diese Optionen aktiviert, werden im Chat-Tab die jeweiligen
+          Links angezeigt.
+        range: SocialMediaConfig
+
+  TranslationConfig:
+    slots:
+    - endpoint
+    - label
+    slot_usage:
+      endpoint:
+        required: true
+      label:
+        required: true
+
+  ChatConfig:
+    slots:
+    - matrix
+    - irc
+    slot_usage:
+      matrix:
+        range: ChatDetailConfig
+      irc:
+        range: ChatDetailConfig
+  ChatDetailConfig: {}
+
+  SocialMediaConfig:
+    slots:
+    - hashtag
+    - mastodon
+    - twitter
+    slot_usage:
+      hashtag: {}
+      mastodon:
+        range: boolean
+      twitter:
+        range: SocialMediaDetailConfig
+  SocialMediaDetailConfig:
+    slots:
+    - display
+    - text
+    slot_usage:
+      display:
+        required: true
+      text:
+        required: true
+
+  Page:
+    description: Overview page aka start page of the conference in https://streaming.media.ccc.de/<acronym>
+    comment: Wenn hier nichts angegeben ist, wird die Startseite automatisch aus
+      der Raumliste generiert
+    slots:
+    - sections
+    slot_usage:
+      sections:
+        range: PageSection
+        required: true
+        multivalued: true
+  PageSection:
+    description: An section / row on a page
+    slots:
+    - title
+    - items
+    slot_usage:
+      title:
+        description: ''
+        required: true
+      items:
+        range: Teaser
+        required: true
+        multivalued: true
+  Teaser:
+    description: A reference to a room/channel/livestream in a section of a page
+    slots:
+    - slug
+    slot_usage:
+      slug:
+        required: true
+
+
+
+
+slots:
+  name:
+    required: true
+  slug:
+    required: true
+  streamId:
+    required: true
+  streamingConfig:
+    range: RoomStreamingConfig
+  relive:
+    description: "Wird diese Option deaktivert, wird die UI für tempor\xE4re Mitschnitte\
+      \ nicht angezeigt"
+    range: boolean
+  embed:
+    description: "Ist dieses Option aktiviert, wird ein Embed-Tab unter dem Video\
+      \ angezeigt. Darüber kann der Player als iframe eingebunden werden. Wenn\
+      \ diese Option deaktivert ist, wird kein Embed-Tab angeboten und die URL zum\
+      \ Einbetten existiert nicht. Ebenso k\xF6nnen alle Embedding-Funktionialit\xE4\
+      ten durch deaktiveren des globalen EMBED-Blocks deaktiviert werden."
+    range: boolean
+  feedback:
+    description: "Wenn diese Option deaktivert taucht der Raum auch im globalen Feedback-Formular\
+      \ nicht auf. H\xE4ngt vom Feedback-Flag in den globalen Optionen ab."
+    range: boolean
+  chat:
+    description: Ist diese Option aktiviert, wird ein Chat-Tab mit den jeweiligen
+      Links angezeigt.
+    range: ChatConfig
+  social:
+    description: Sind diese Optionen aktiviert, werden im Chat-Tab die jeweiligen
+      Links angezeigt.
+    range: SocialMediaConfig
+  schedule:
+    description: "Wenn diese Option deaktivert wird der Raum nicht im Fahrplan gesucht\
+      \ und auch auf der Startseite findet keine Darstellung statt. Ebenso k\xF6nnen\
+      \ alle Fahrplan-Funktionialit\xE4ten durch auskommentieren des globalen Flags\
+      \ deaktiviert werden."
+    range: boolean
+  features:
+    range: Features
+    required: true
+  overviewPage:
+    range: Page
+  html:
+    description: Anpassung der Standard-Texte
+  extraFiles: {}
+  display:
+    required: true
+  display_short: {}
+  wide:
+    description: "Doppelte Breite für die Teaserbox auf der Übersichtsseite"
+    range: boolean
+  preview:
+    description: ''
+    range: boolean
+  translation:
+    range: TranslationConfig
+    multivalued: true
+  stereo:
+    description: ''
+    range: boolean
+  dash:
+    description: ''
+    range: boolean
+  hd_video:
+    description: "Wenn dieses Flag deaktiviert wird kein HD-Video (1920\xD71080) angeboten.\
+      \ Wird auch SD-Video und DASH deaktivert, wird für diesen Raum überhaupt\
+      \ kein Video angeboten. In diesem Fall wird Slides, Audio und zuletzt Musik\
+      \ als Default-Stream angenommen \u2013\_sofern aktiviert."
+    range: boolean
+  sd_video:
+    description: ''
+    range: boolean
+  slides:
+    description: "Getrennter Stream für Vortragsfolien verfügbar"
+    range: boolean
+  audio:
+    description: ''
+    range: boolean
+  music:
+    description: ''
+    range: boolean
+  subtitles:
+    description: "Subtitles-Button und die damit verbundenen Funktionen. H\xE4ngt\
+      \ vom Subtitles-Flag in den globalen Optionen ab."
+    range: boolean
+  subtitles_room_id:
+    description: ''
+    range: integer
+  endpoint:
+    required: true
+  label:
+    required: true
+  matrix:
+    range: IrcConfig
+  irc:
+    range: IrcConfig
+  hashtag: {}
+  mastodon:
+    range: boolean
+  twitter:
+    range: SocialMediaDetailConfig
+  text:
+    required: true
+  title:
+    description: ''
+    required: true
+  items:
+    range: TODO
+    required: true
+    multivalued: true
+  sections:
+    description: ''
+    range: PageSection
+    required: true
+    multivalued: true
+  conference:
+    required: true
