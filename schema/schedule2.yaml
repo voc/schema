@@ -1,0 +1,414 @@
+name: Schedule2
+id: https://c3voc.org/schema/schedule2
+imports:
+- linkml:types
+prefixes:
+  stwo: https://c3voc.org/schema/schedule2
+  linkml: https://w3id.org/linkml/
+default_prefix: stwo
+
+classes:
+
+  Event:
+    description:
+
+    slots:
+    - type
+    - guid
+    - code
+    - logo
+    - slug
+    - url
+    - title
+    - subtitle
+    - track
+    - language
+    - abstract
+    - description
+    - persons
+    - start
+    - end
+    - room
+    - links
+    - attachments
+    - feedback
+    - origin
+    slot_usage:
+      type:
+        required: true
+      start:
+        required: true
+      end:
+        required: true
+      room:
+        required: true
+        # range: RoomName
+      slug:
+        required: true
+      url:
+        required: true
+      title:
+        required: true
+      track:
+        required: true
+      language:
+        required: true
+      abstract:
+        required: true
+      description: {}
+      participants:
+        range: Person
+        required: true
+        multivalued: true
+      links:
+        range: Reference
+        required: true
+        multivalued: true
+      attachments:
+        range: Reference
+        multivalued: true
+  EventParticipant:
+    slots:
+      - role # TODO
+      - guid
+      - name
+    slot_usage:
+      role:
+        range: event_participant_role_options
+
+  Person:
+    slots:
+    - name
+    - guid
+    - avatar
+    - biography
+    - url
+    - links
+    slot_usage:
+      name:
+        required: true
+      guid:
+        description: Person UUID generated from email address via uuid5(NS_URL, 'acct:user@domain.tld')
+          or random uuid4() if email not available
+      avatar:
+        description: absolute URL, or relative to base_url
+      links:
+        range: Reference
+        multivalued: true
+
+
+  Schedule2Root:
+    slots:
+    - $schema
+    - schedule
+    - generator
+    slot_usage:
+      schedule:
+        range: Schedule2
+        required: true
+
+  Schedule2:
+    slots:
+    - version
+    - base_url
+    - conference
+    slot_usage:
+      version:
+        required: true
+      # TODO
+      base_url:
+        description: base for relative media URIs in this document
+      conference:
+        range: Conference
+        required: true
+      events:
+        range: Event
+        multivalued: true
+      persons:
+        range: Person
+        multivalued: true
+
+  Conference:
+    slots:
+    - acronym
+    - title
+    - description
+    - start
+    - end
+    - timeslot_duration
+    - time_zone_name
+    - logo
+    - colors
+    - keywords
+    - url
+    - tracks
+    - rooms
+    - meta
+    - days
+    slot_usage:
+      acronym:
+        required: true
+      title:
+        required: true
+      description: {}
+      start:
+        required: true
+      end:
+        required: true
+      daysCount:
+        range: integer
+        required: true
+      timeslot_duration:
+        required: true
+      time_zone_name: {}
+      logo: {}
+      colors: {}
+      keywords:
+        multivalued: true
+      url:
+        description: URL to the conference schedule or public website
+      tracks:
+        range: TODO
+        multivalued: true
+      rooms:
+        range: Room
+        multivalued: true
+      meta: {}
+      days:
+        range: Day
+        required: true
+        multivalued: true
+
+  Track:
+    slots:
+    - name
+    - slug
+    - guid
+    - colors
+    slot_usage:
+      color: {}
+
+  Day:
+    slots:
+    - index
+    - date
+    - start
+    - end
+    slot_usage:
+      index:
+        range: integer
+        required: true
+      date:
+        required: true
+      start:
+        required: true
+      end:
+        required: true
+
+  Room:
+    slots:
+    - name
+    - slug
+    - type
+    - guid
+    - stream
+    - description
+    - capacity
+    - url
+    - features
+    - assembly
+    slot_usage:
+      name:
+        required: true
+      slug: {}
+      type:
+        range: referce_type_options
+      guid:
+        required: true
+      stream_id: {}
+      description:
+        description: might also be set as description_de, description_en etc.
+      capacity: {}
+      url: {}
+      features:
+        range: RoomFeatures
+      assembly:
+        range: HubAssembly
+  RoomFeatures:
+    slots:
+    - recording
+    slot_usage:
+      recording:
+        range: recording_options
+
+  Reference:
+    slots:
+    - type
+    - url
+    - title
+    slot_usage:
+      type:
+        range: referce_type_options
+      url:
+        required: true
+      title: {}
+
+  Image:
+    slots:
+      url
+
+  ColorDict:
+    slots:
+    - primary
+    - secondary
+    - tertiary
+    - light
+    - dark
+
+
+  TranslationDict:
+    slots:
+    - de
+    - en
+
+
+  HubAssembly:
+    slots:
+    - type
+    - name
+    - slug
+    - guid
+    - url
+    slot_usage:
+      name:
+        required: true
+      slug:
+        required: true
+      guid:
+        required: true
+      url: {}
+
+  System:
+    slots:
+      - name
+      - version
+      - url
+
+
+enums:
+  referce_type_options:
+    permissible_values:
+      slides: {}
+      paper: {}
+      web: {}
+      blog: {}
+      article: {}
+      media: {}
+      related: {}
+      activitypub: {}
+
+  recording_options:
+    permissible_values:
+      record_by_default: {}
+      not_recorded_by_default: {}
+      recording_forbidden: {}
+      recording_not_possible: {}
+      unknown: {}
+
+slots:
+  version:
+    description: Revision of the schedule of this conference
+    required: true
+  conference:
+    range: Conference
+    required: true
+  acronym:
+    required: true
+  title: {}
+  description:
+    description: TODO
+    union_of:
+      - string
+      - TranslationDict
+  start:
+    required: true
+  end:
+    required: true
+  time_zone_name: {}
+  logo:
+    range: Image
+  colors:
+    range: ColorDict
+  keywords:
+    multivalued: true
+  url:
+    required: true
+  name:
+    required: true
+  slug: {}
+  tracks:
+    range: Track
+    multivalued: true
+  rooms:
+    required: true
+  meta: {}
+  days:
+    range: Day
+    required: true
+    multivalued: true
+  index:
+    range: integer
+    required: true
+  date:
+    required: true
+  guid:
+    required: true
+  code: {}
+  room:
+    range: RoomName
+    required: true
+  subtitle:
+    required: true
+  track:
+    required: true
+  type: # TODO
+  language:
+    required: true
+  abstract:
+    required: true
+  recording_license: {}
+  # TODO
+  do_not_record: {}
+  do_not_stream: {}
+  participants:
+    range: EventParticipant
+    required: true
+    multivalued: true
+  links:
+    range: Reference
+    multivalued: true
+  attachments:
+    range: Reference
+    multivalued: true
+  feedback: {} # TODO: Object, also on confernce
+  origin: {} # TODO
+  avatar:
+    range: Image
+    description: Avatar or
+  biography: {}
+  stream_id: {}
+  capacity: {}
+  features:
+    range: RoomFeatures
+  assembly:
+    range: HubAssembly
+  recording:
+    range: recording_options
+  schedule:
+    range: Schedule
+    required: true
+  $schema: {}
+  generator:
+    range: System
+
+
