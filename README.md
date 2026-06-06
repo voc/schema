@@ -14,7 +14,7 @@ Subdomains (draft v0.2):
   - WiP https://github.com/voc/schedule/pull/146 👷
 - Production (Projects, Tickets, …)
 - Streaming (Channels, Livestreams, …)
-  - version version implemented and in use ✅    
+  - first version implemented and in use ✅    
 - Inventory (Products, Items, Flightcases, Transports…)
   - define something together with https://inventree.org project?
 - Finance (Invoices, …)
